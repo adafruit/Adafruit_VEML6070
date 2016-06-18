@@ -1,0 +1,15 @@
+{
+  "name": "Adafruit_VEML6070",
+  "keywords": "sensor, UV, light",
+  "description": "Arduino library for VEML6070 UV light sensors",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/adafruit/Adafruit_VEML6070.git"
+  },
+  "frameworks": "arduino",
+  "platforms": [
+    "atmelavr",
+    "espressif"
+  ]
+}
