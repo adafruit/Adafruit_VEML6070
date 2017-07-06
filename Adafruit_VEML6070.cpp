@@ -25,9 +25,11 @@
 
 
 void Adafruit_VEML6070::begin(veml6070_integrationtime_t itime) {
+  
   Wire.begin();
   Wire.beginTransmission(VEML6070_ADDR_L);
-  Wire.write((itime << 2) | 0x02);
+  this->config=((itime << 2) | 0x02);
+  Wire.write(config);
   Wire.endTransmission();
   delay(500);
 }
@@ -42,3 +44,15 @@ uint16_t Adafruit_VEML6070::readUV() {
   return uvi;  
 }
 
+void Adafruit_VEML6070::sleep(bool mode) {
+
+	if (mode) 
+		this->config |= 1; // Go to sleep			
+	else 
+		this->config &= 254; // Wake up
+	
+  Wire.beginTransmission(VEML6070_ADDR_L);
+  Wire.write(this->config);
+  Wire.endTransmission();
+  delay(500);
+}
