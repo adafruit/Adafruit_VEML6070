@@ -29,7 +29,7 @@ void Adafruit_VEML6070::begin(veml6070_integrationtime_t itime) {
   Wire.begin();
   Wire.beginTransmission(VEML6070_ADDR_L);
   this->config=((itime << 2) | 0x02);
-  Wire.write(config);
+  Wire.write(this->config);
   Wire.endTransmission();
   delay(500);
 }
