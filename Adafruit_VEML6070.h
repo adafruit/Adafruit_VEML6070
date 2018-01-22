@@ -52,6 +52,8 @@ class Adafruit_VEML6070 {
   Adafruit_VEML6070() {};
 
   void begin(veml6070_integrationtime_t itime);
+  void sleep(bool mode);
   uint16_t readUV(void);
  private:
+  byte config;
 };
