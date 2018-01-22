@@ -42,16 +42,22 @@
 /*! 
     @brief  setup and initialize communication with the hardware
     @param itime the integration time to use for the data
+    @param twoWire Optional pointer to the desired TwoWire I2C object. Defaults to &Wire
 */
 /**************************************************************************/
-void Adafruit_VEML6070::begin(veml6070_integrationtime_t itime) {
-  Wire.begin();
-  Wire.beginTransmission(VEML6070_ADDR_L);
-  Wire.write((itime << 2) | 0x02);
-  Wire.endTransmission();
+void Adafruit_VEML6070::begin(veml6070_integrationtime_t itime, TwoWire *twoWire) {
+  _i2c = twoWire;
+
+  //default setting
+  _commandRegister.reg = 0x02;
+  _commandRegister.bit.IT = itime;
+
+  _i2c->begin();
+  _i2c->beginTransmission(VEML6070_ADDR_L);
+  _i2c->write(_commandRegister.reg);
+  _i2c->endTransmission();
   delay(500);
 }
-
 
 /**************************************************************************/
 /*! 
@@ -60,12 +66,26 @@ void Adafruit_VEML6070::begin(veml6070_integrationtime_t itime) {
 */
 /**************************************************************************/
 uint16_t Adafruit_VEML6070::readUV() {
-  if (Wire.requestFrom(VEML6070_ADDR_H, 1) != 1) return -1;
-  uint16_t uvi = Wire.read();
+  if (_i2c->requestFrom(VEML6070_ADDR_H, 1) != 1) return -1;
+  uint16_t uvi = _i2c->read();
   uvi <<= 8;
-  if (Wire.requestFrom(VEML6070_ADDR_L, 1) != 1) return -1;
-  uvi |= Wire.read();
+  if (_i2c->requestFrom(VEML6070_ADDR_L, 1) != 1) return -1;
+  uvi |= _i2c->read();
 
   return uvi;  
 }
 
+/**************************************************************************/
+/*! 
+    @brief  enter or exit sleep (shutdown) mode. While in sleep mode
+      the chip draws ~1uA
+    @param state true to enter sleep mode, false to exit
+*/
+/**************************************************************************/
+void Adafruit_VEML6070::sleep(bool state) {
+  _commandRegister.bit.SD = state;
+
+  _i2c->beginTransmission(VEML6070_ADDR_L);
+  _i2c->write(_commandRegister.reg);
+  _i2c->endTransmission();
+}

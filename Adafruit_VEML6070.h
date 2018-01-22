@@ -51,7 +51,23 @@ class Adafruit_VEML6070 {
  public:
   Adafruit_VEML6070() {};
 
-  void begin(veml6070_integrationtime_t itime);
+  void begin(veml6070_integrationtime_t itime, TwoWire *twoWire = &Wire);
   uint16_t readUV(void);
+  void sleep(bool state);
  private:
+  TwoWire *_i2c;
+
+  typedef union {
+    struct {
+      uint8_t SD:1;
+      uint8_t :1;
+      uint8_t IT:2;
+      uint8_t ACK_THD:1;
+      uint8_t ACK:1;
+    } bit;
+    uint8_t reg;
+
+  } commandRegister;
+
+  commandRegister _commandRegister;
 };
