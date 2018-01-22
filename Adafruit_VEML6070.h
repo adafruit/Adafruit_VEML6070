@@ -1,18 +1,21 @@
-/*************************************************** 
-  This is a library for the Adafruit VEML6070 UV Sensor Breakout
-
-  Designed specifically to work with the VEML6070 sensor from Adafruit
-  ----> https://www.adafruit.com/products/2899
-
-  These sensors use I2C to communicate, 2 pins are required to  
-  interface
-  Adafruit invests time and resources providing this open source code, 
-  please support Adafruit and open-source hardware by purchasing 
-  products from Adafruit!
-
-  Written by Limor Fried/Ladyada for Adafruit Industries.  
-  BSD license, all text above must be included in any redistribution
- ****************************************************/
+/*!
+ * @file Adafruit_VEML6070.h
+ *
+ * Designed specifically to work with the VEML6070 sensor from Adafruit
+ * ----> https://www.adafruit.com/products/2899
+ *
+ * These sensors use I2C to communicate, 2 pins (SCL+SDA) are required
+ * to interface with the breakout.
+ *
+ * Adafruit invests time and resources providing this open source code,
+ * please support Adafruit and open-source hardware by purchasing
+ * products from Adafruit!
+ *
+ * Written by Limor Fried/Ladyada for Adafruit Industries.  
+ *
+ * BSD license, all text here must be included in any redistribution.
+ *
+ */
 
 #if (ARDUINO >= 100)
  #include "Arduino.h"
@@ -22,10 +25,15 @@
 #include "Wire.h"
 
 // really unusual way of getting data, your read from two different addrs!
-#define VEML6070_ADDR_H 0x39
-#define VEML6070_ADDR_L 0x38
+#define VEML6070_ADDR_H 0x39 ///< High address
+#define VEML6070_ADDR_L 0x38 ///< Low address
 
-// three different integration times
+
+/**************************************************************************/
+/*! 
+    @brief  integration time definitions
+*/
+/**************************************************************************/
 typedef enum veml6070_integrationtime {
   VEML6070_HALF_T,
   VEML6070_1_T,
@@ -34,6 +42,11 @@ typedef enum veml6070_integrationtime {
 } veml6070_integrationtime_t;
 
 
+/**************************************************************************/
+/*! 
+    @brief  Class that stores state and functions for interacting with VEML6070 sensor IC
+*/
+/**************************************************************************/
 class Adafruit_VEML6070 {
  public:
   Adafruit_VEML6070() {};
