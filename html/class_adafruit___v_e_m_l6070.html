@@ -59,6 +59,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_adafruit___v_e_m_l6070-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -73,18 +74,21 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a87dfd819aae322b597dcb297eb69a4a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___v_e_m_l6070.html#a87dfd819aae322b597dcb297eb69a4a4">begin</a> (<a class="el" href="_adafruit___v_e_m_l6070_8h.html#a442ef2c11e41d0b986a06271c6bde4cd">veml6070_integrationtime_t</a> itime)</td></tr>
-<tr class="memdesc:a87dfd819aae322b597dcb297eb69a4a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup and initialize communication with the hardware  <a href="#a87dfd819aae322b597dcb297eb69a4a4">More...</a><br /></td></tr>
-<tr class="separator:a87dfd819aae322b597dcb297eb69a4a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa224e8941f71d4b881f791c6cbc91577"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___v_e_m_l6070.html#aa224e8941f71d4b881f791c6cbc91577">begin</a> (<a class="el" href="_adafruit___v_e_m_l6070_8h.html#a442ef2c11e41d0b986a06271c6bde4cd">veml6070_integrationtime_t</a> itime, TwoWire *twoWire=&amp;Wire)</td></tr>
+<tr class="memdesc:aa224e8941f71d4b881f791c6cbc91577"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup and initialize communication with the hardware  <a href="#aa224e8941f71d4b881f791c6cbc91577">More...</a><br /></td></tr>
+<tr class="separator:aa224e8941f71d4b881f791c6cbc91577"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f30de3217b03a74f2dea21751f595d9"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___v_e_m_l6070.html#a7f30de3217b03a74f2dea21751f595d9">readUV</a> (void)</td></tr>
 <tr class="memdesc:a7f30de3217b03a74f2dea21751f595d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">read the chips UV sensor  <a href="#a7f30de3217b03a74f2dea21751f595d9">More...</a><br /></td></tr>
 <tr class="separator:a7f30de3217b03a74f2dea21751f595d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a424489c153094576fafcd417d8bb6c7d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___v_e_m_l6070.html#a424489c153094576fafcd417d8bb6c7d">sleep</a> (bool state)</td></tr>
+<tr class="memdesc:a424489c153094576fafcd417d8bb6c7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">enter or exit sleep (shutdown) mode. While in sleep mode the chip draws ~1uA  <a href="#a424489c153094576fafcd417d8bb6c7d">More...</a><br /></td></tr>
+<tr class="separator:a424489c153094576fafcd417d8bb6c7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class that stores state and functions for interacting with VEML6070 sensor IC. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a87dfd819aae322b597dcb297eb69a4a4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87dfd819aae322b597dcb297eb69a4a4">&#9670;&nbsp;</a></span>begin()</h2>
+<a id="aa224e8941f71d4b881f791c6cbc91577"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa224e8941f71d4b881f791c6cbc91577">&#9670;&nbsp;</a></span>begin()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -93,8 +97,18 @@ Public Member Functions</h2></td></tr>
           <td class="memname">void Adafruit_VEML6070::begin </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="_adafruit___v_e_m_l6070_8h.html#a442ef2c11e41d0b986a06271c6bde4cd">veml6070_integrationtime_t</a>&#160;</td>
-          <td class="paramname"><em>itime</em></td><td>)</td>
+          <td class="paramname"><em>itime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">TwoWire *&#160;</td>
+          <td class="paramname"><em>twoWire</em> = <code>&amp;Wire</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -103,6 +117,7 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">itime</td><td>the integration time to use for the data </td></tr>
+    <tr><td class="paramname">twoWire</td><td>Optional pointer to the desired TwoWire I2C object. Defaults to &amp;Wire </td></tr>
   </table>
   </dd>
 </dl>
@@ -127,6 +142,32 @@ Public Member Functions</h2></td></tr>
 
 <p>read the chips UV sensor </p>
 <dl class="section return"><dt>Returns</dt><dd>the UV reading as a 16 bit integer </dd></dl>
+
+</div>
+</div>
+<a id="a424489c153094576fafcd417d8bb6c7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a424489c153094576fafcd417d8bb6c7d">&#9670;&nbsp;</a></span>sleep()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Adafruit_VEML6070::sleep </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>state</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>enter or exit sleep (shutdown) mode. While in sleep mode the chip draws ~1uA </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">state</td><td>true to enter sleep mode, false to exit </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
