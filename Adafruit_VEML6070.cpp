@@ -37,6 +37,12 @@
 
 #include "Adafruit_VEML6070.h"
 
+/*
+*/
+Adafruit_VEML6070::Adafruit_VEML6070() {
+    //default setting
+    _commandRegister.reg = 0x02;
+}
 
 /**************************************************************************/
 /*! 
@@ -48,15 +54,36 @@
 void Adafruit_VEML6070::begin(veml6070_integrationtime_t itime, TwoWire *twoWire) {
   _i2c = twoWire;
 
-  //default setting
-  _commandRegister.reg = 0x02;
   _commandRegister.bit.IT = itime;
 
   _i2c->begin();
   _i2c->beginTransmission(VEML6070_ADDR_L);
   _i2c->write(_commandRegister.reg);
   _i2c->endTransmission();
-  delay(500);
+}
+
+/**************************************************************************/
+/*! 
+    @brief  Set the threshold-based interrupt feature
+    @param  state true to enable, false to disable
+    @param  level 1 for threshold value of 145, 0 for 102 (default)
+*/
+/**************************************************************************/
+void Adafruit_VEML6070::setInterrupt(bool state, bool level) {
+  _commandRegister.bit.ACK = state;
+  _commandRegister.bit.ACK_THD = level;
+
+  begin(_commandRegister.bit.IT);
+}
+
+/**************************************************************************/
+/*! 
+    @brief  Clear possible interrupt state (ACK active) by reading register
+    @return True if ACK was active (interrupt triggered)
+*/
+/**************************************************************************/
+bool Adafruit_VEML6070::clearAck() {
+  return _i2c->requestFrom(VEML6070_ADDR_ARA, 1);
 }
 
 /**************************************************************************/
@@ -66,6 +93,7 @@ void Adafruit_VEML6070::begin(veml6070_integrationtime_t itime, TwoWire *twoWire
 */
 /**************************************************************************/
 uint16_t Adafruit_VEML6070::readUV() {
+  waitForNext();
   if (_i2c->requestFrom(VEML6070_ADDR_H, 1) != 1) return -1;
   uint16_t uvi = _i2c->read();
   uvi <<= 8;
@@ -73,6 +101,17 @@ uint16_t Adafruit_VEML6070::readUV() {
   uvi |= _i2c->read();
 
   return uvi;  
+}
+
+/**************************************************************************/
+/*! 
+    @brief  wait for one integration period (with 10% clock error margin)
+*/
+/**************************************************************************/
+void Adafruit_VEML6070::waitForNext() {
+  for (uint8_t i = 0; i <= _commandRegister.bit.IT; i++) {
+    delay(70);  // nominally 62.5ms
+  }
 }
 
 /**************************************************************************/
