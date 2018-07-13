@@ -17,6 +17,7 @@ before_install:
 
 install:
    - arduino --install-library "Adafruit ILI9341"
+   - arduino --install-library "AUnit"
 
 script:
    - build_main_platforms
