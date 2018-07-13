@@ -25,8 +25,10 @@
 #include "Wire.h"
 
 // really unusual way of getting data, your read from two different addrs!
-#define VEML6070_ADDR_H 0x39 ///< High address
-#define VEML6070_ADDR_L 0x38 ///< Low address
+
+#define VEML6070_ADDR_H     (0x39) ///< High address
+#define VEML6070_ADDR_L     (0x38) ///< Low address
+#define VEML6070_ADDR_ARA   (0x0C) ///< Alert Resp Address (read to clear condition)
 
 
 /**************************************************************************/
@@ -49,12 +51,16 @@ typedef enum veml6070_integrationtime {
 /**************************************************************************/
 class Adafruit_VEML6070 {
  public:
-  Adafruit_VEML6070() {};
+  Adafruit_VEML6070();
 
   void begin(veml6070_integrationtime_t itime, TwoWire *twoWire = &Wire);
+  void setInterrupt(bool state, bool level = 0);
+  bool clearAck();
   uint16_t readUV(void);
+  void waitForNext(void);
   void sleep(bool state);
  private:
+  void writeCommand(void);
   TwoWire *_i2c;
 
   typedef union {
