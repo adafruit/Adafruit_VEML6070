@@ -60,6 +60,7 @@ class Adafruit_VEML6070 {
   void waitForNext(void);
   void sleep(bool state);
  private:
+  void writeCommand(void);
   TwoWire *_i2c;
 
   typedef union {

@@ -1,8 +1,10 @@
+// Unit tests for Adafruit_VEML6070 library
+// By C. Matlack
+
 // These unit tests require the AUnit unit testing library,
 // available within the Arduino IDE. Note that old versions of
 // the Arduino IDE, including 1.6.5, may not use a new enough
 // C++ compiler for nullptr to be defined.
-
 
 
 #include <Wire.h>
@@ -17,7 +19,6 @@
 Adafruit_VEML6070 uv = Adafruit_VEML6070();
 
 
-  
 test(0_hello) {
   assertEqual(1, 1);
 }
@@ -36,24 +37,28 @@ test(1_initialize_and_read) {
   }
 }
 
-test(2_set_interrupt) {
-  Serial.println("UV measurement must exceed 102 for this test to be informative.");
-  Serial.println("Interrupt trigger will result in values of 65535.");
-  uv.setInterrupt(true, 0);
-  uv.begin(VEML6070_4_T);
 
-  uint16_t val = 0;
+test(2_interrupt) {
+  Serial.println("\nUV measurement must *cross* from <102  to >102 for this test to be informative.");
+  Serial.println("Successful interrupt trigger will result in values of 65535 (I2C read failure).");
+  
+  // Check that interrupt is not triggered 
+  assertTrue(digitalRead(ACK_PIN));
+  assertFalse(uv.clearAck());
+  
+  uv.begin(VEML6070_4_T);
+  uv.setInterrupt(true, 0);
 
   // Note that once the interrupt is tripped,
   // values will read as 65535 because the
   // device becomes unresponsive to I2C reads
-  for (uint16_t i = 0; i < 10; i++) {
-    val = uv.readUV();
+  for (uint16_t i = 0; i < 30; i++) {
+    uint16_t val = uv.readUV();
     Serial.print("UV: "); 
     Serial.println(val);
+    
+    if (!digitalRead(ACK_PIN)) { break; }
   }  
-  delay(500);
-
 
   bool pin = digitalRead(ACK_PIN);
   bool state = uv.clearAck();
@@ -63,22 +68,17 @@ test(2_set_interrupt) {
 
   assertTrue(pin ^ state);  // If ACK is in triggered state, pin should be low
 
-  uv.clearAck();
+  uv.clearAck();          // Redundant, but thorough
   uv.setInterrupt(false);
-  uv.clearAck();
+  uv.clearAck();          // Redundant, but thorough
   
   if (!state) { skip(); } // Don't mark as success if we didn't trigger interrupt
 }
 
 
-
-
-
 void setup() {
   delay(1000); // wait for stability on some boards to prevent garbage Serial
-  
-  Serial.begin(115200); // **WARNING** for unknown reasons, 9600 results in I2C bus lockup
-  
+  Serial.begin(115200);
   while(!Serial); // for the Arduino Leonardo/Micro only
 
   pinMode(POWER_PIN, OUTPUT);
@@ -86,9 +86,7 @@ void setup() {
   delay(100);
 }
 
+
 void loop() {
-  // Should get:
-  // TestRunner summary:
-  //    1 passed, 1 failed, 0 skipped, 0 timed out, out of 2 test(s).
   aunit::TestRunner::run();
 }
