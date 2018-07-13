@@ -12,8 +12,8 @@
 #include <AUnitVerbose.h>
 
 // Pin assignments
-#define POWER_PIN (13)
-#define ACK_PIN   (11)
+#define POWER_PIN (11)
+#define ACK_PIN   (13)    // Blue LED on weakly when ACK is *not* set
 
 // Globals
 Adafruit_VEML6070 uv = Adafruit_VEML6070();
@@ -33,10 +33,6 @@ bool reset_state() {
   digitalWrite(SCL, LOW);
 
   delay(1000);
-  
-  if (digitalRead(ACK_PIN) == LOW) {
-    Serial.println("ACK is set, expect problems...");
-  }
 
   // Require I2C bus to be clear
   pinMode(SDA, INPUT);
@@ -44,6 +40,9 @@ bool reset_state() {
   Wire.begin(); // Sets pullups on SDA and SCL
   digitalWrite(POWER_PIN, HIGH);
   delay(100);
+  if (digitalRead(ACK_PIN) == LOW) {
+    Serial.println("ACK is set, expect problems...");
+  }
   if (!i2c_ready()) { Serial.println("I2C bus locked after power cycle"); }
   return i2c_ready();
 }
