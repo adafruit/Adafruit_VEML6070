@@ -59,8 +59,7 @@ void Adafruit_VEML6070::begin(veml6070_integrationtime_t itime, TwoWire *twoWire
 
   _commandRegister.bit.IT = itime;
 
-  clearAck();       // If set, MUST be cleared before device will respond.
-                    // See datasheet rev 1.7, p.7, and app note p. 13 (example code)
+  clearAck();
   writeCommand();
 }
 
@@ -82,6 +81,9 @@ void Adafruit_VEML6070::setInterrupt(bool state, bool level) {
 /**************************************************************************/
 /*! 
     @brief  Clear possible interrupt state (ACK active) by reading register
+            If set, MUST be cleared before device will respond at other
+            I2C addresses.
+            See datasheet rev 1.7, p.7, and app note p. 13 (example code)
     @return True if ACK was active (interrupt triggered)
 */
 /**************************************************************************/
