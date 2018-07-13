@@ -30,6 +30,7 @@
 #define VEML6070_ADDR_L     (0x38) ///< Low address
 #define VEML6070_ADDR_ARA   (0x0C) ///< Alert Resp Address (read to clear condition)
 
+#define _DEBUG_                    ///< Enables serial output for troubleshooting
 
 /**************************************************************************/
 /*! 

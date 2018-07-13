@@ -19,6 +19,36 @@
 Adafruit_VEML6070 uv = Adafruit_VEML6070();
 
 
+bool i2c_ready(){
+  return (digitalRead(SDA) == HIGH) && (digitalRead(SCL) == HIGH);
+}
+
+
+bool reset_state() {  
+  pinMode(POWER_PIN, OUTPUT);
+  digitalWrite(POWER_PIN, LOW);
+  pinMode(SDA, OUTPUT);
+  digitalWrite(SDA, LOW);
+  pinMode(SCL, OUTPUT);
+  digitalWrite(SCL, LOW);
+
+  delay(1000);
+  
+  if (digitalRead(ACK_PIN) == LOW) {
+    Serial.println("ACK is set, expect problems...");
+  }
+
+  // Require I2C bus to be clear
+  pinMode(SDA, INPUT);
+  pinMode(SCL, INPUT);
+  Wire.begin(); // Sets pullups on SDA and SCL
+  digitalWrite(POWER_PIN, HIGH);
+  delay(100);
+  if (!i2c_ready()) { Serial.println("I2C bus locked after power cycle"); }
+  return i2c_ready();
+}
+
+
 test(0_hello) {
   assertEqual(1, 1);
 }
@@ -71,10 +101,29 @@ test(2_interrupt) {
   uv.clearAck();          // Redundant, but thorough
   uv.setInterrupt(false);
   uv.clearAck();          // Redundant, but thorough
+
+  delay(500);
+  assertFalse(uv.clearAck());
   
   if (!state) { skip(); } // Don't mark as success if we didn't trigger interrupt
 }
 
+
+test(3_read_with_power_cycles) {
+  for (uint16_t i = 0; i < 10; i++) {
+
+    Serial.println("\nInitializing");
+    uv.begin(VEML6070_1_T);             // Test hangs here on second iteration
+
+    uint16_t value = uv.readUV();
+    Serial.print("UV: ");
+    Serial.println(value);
+    assertNotEqual(value, (uint16_t) 0xFFFF);
+    assertNotEqual(value, (uint16_t) 0);
+
+    assertTrue(reset_state());
+  }
+}
 
 void setup() {
   delay(1000); // wait for stability on some boards to prevent garbage Serial
@@ -83,6 +132,7 @@ void setup() {
 
   pinMode(POWER_PIN, OUTPUT);
   digitalWrite(POWER_PIN, HIGH);
+  digitalWrite(ACK_PIN, INPUT_PULLUP);    // Note also 10k hardware pull-up
   delay(100);
 }
 

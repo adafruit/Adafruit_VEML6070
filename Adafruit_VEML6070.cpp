@@ -89,7 +89,13 @@ void Adafruit_VEML6070::setInterrupt(bool state, bool level) {
 /**************************************************************************/
 bool Adafruit_VEML6070::clearAck() {
   _i2c->begin();
-  return _i2c->requestFrom(VEML6070_ADDR_ARA, 1);
+  bool ret = _i2c->requestFrom(VEML6070_ADDR_ARA, 1);
+
+  #ifdef _DEBUG_
+    if (ret) { Serial.println("\nACK cleared\n"); }
+  #endif
+
+  return ret;
 }
 
 /**************************************************************************/
