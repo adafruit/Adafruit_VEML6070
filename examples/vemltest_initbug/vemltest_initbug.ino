@@ -2,8 +2,7 @@
 #include <Adafruit_VEML6070.h>
 
 // Pin assignments
-#define LED_PIN   (13)
-#define POWER_PIN (12)
+#define POWER_PIN (13)    // Note blue LED also here
 #define ACK_PIN   (11)
 
 #define VEML6070_ADDR_ARA   (0x0C)      // Alert Resp Address (read to clear condition)
@@ -12,16 +11,15 @@
 Adafruit_VEML6070 uv = Adafruit_VEML6070();
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("VEML6070 Test to Reveal Initializiation Bug");
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, LOW);
   
   pinMode(POWER_PIN, OUTPUT);
   digitalWrite(POWER_PIN, LOW);
   
   digitalWrite(ACK_PIN, INPUT_PULLUP);  // ACK is open-drain
 
+  delay(1000);
   //pinMode(SDA, INPUT);
   //pinMode(SCL, INPUT);
 }
@@ -31,28 +29,24 @@ bool testAck() {
   if (ack) { Serial.println("ACK is low"); }
 }
 
-void clearARA() {
-    Wire.begin();
-    // Read 0 bytes, sending stop command (this is a hack to fit SMBus protocol)
-    if (Wire.requestFrom(VEML6070_ADDR_ARA, 0, true)) {
-      //Wire.read();
-    }
+bool i2c_ready(){
+  return (digitalRead(SDA) == HIGH) && (digitalRead(SCL) == HIGH);
 }
 
 void loop() {
 
   // Power up and initialize the VEML 6070
   digitalWrite(POWER_PIN, HIGH);
-  delay(500);  // For device to power up
+  delay(100);  // For device to power up
   //Wire.begin();
   //Serial.println("Wire initialized");
   
-  //testAck();
+  testAck();
+  if (!i2c_ready()) { Serial.println("I2C bus locked"); }
   //clearARA();
-  //Serial.println("checked ARA");
-  
-  uv.begin(VEML6070_1_T);
-  delay(150);   // 1_T is ~125ms; allow error margin for first measurement
+  Serial.println("initializing");
+  if (uv.clearAck()) { Serial.println("Ack was set"); } else { Serial.println("Ack clear"); }
+  uv.begin(VEML6070_HALF_T);
   Serial.println("UV initialized");
 
 
@@ -69,12 +63,12 @@ void loop() {
 
   // Power down the UV sensor, and drive the I2C bus
   // to ground to ensure the sensor is actually power-cycled
-  digitalWrite(POWER_PIN, LOW);
+  //digitalWrite(POWER_PIN, LOW);
   //pinMode(SDA, OUTPUT);
   //digitalWrite(SDA, LOW);
   //pinMode(SCL, OUTPUT);
   //digitalWrite(SCL, LOW);
-  delay(100);
+  //delay(100);
   //pinMode(SDA, INPUT);
   //pinMode(SCL, INPUT);
   //delay(10);
