@@ -26,9 +26,9 @@
 
 // really unusual way of getting data, your read from two different addrs!
 
-#define VEML6070_ADDR_H     (0x39) //< High address
-#define VEML6070_ADDR_L     (0x38) //< Low address
-#define VEML6070_ADDR_ARA   (0x0C) // Alert Resp Address (read to clear condition)
+#define VEML6070_ADDR_H     (0x39) ///< High address
+#define VEML6070_ADDR_L     (0x38) ///< Low address
+#define VEML6070_ADDR_ARA   (0x0C) ///< Alert Resp Address (read to clear condition)
 
 
 /**************************************************************************/
