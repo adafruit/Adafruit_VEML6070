@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include "Adafruit_VEML6070.h"
 
-Adafruit_VEML6070 uv = Adafruit_VEML6070();
+Adafruit_VEML6070<TwoWire> uv = Adafruit_VEML6070<TwoWire>(&Wire);
 
 void setup() {
   Serial.begin(9600);

@@ -23,6 +23,7 @@
  #include "WProgram.h"
 #endif
 #include "Wire.h"
+#include "SoftWire.h"
 
 
 #define VEML6070_ADDR_H     (0x39) ///< High measurement byte address
@@ -52,9 +53,10 @@ typedef enum veml6070_integrationtime {
 template <class I2C>
 class Adafruit_VEML6070 {
  public:
-  Adafruit_VEML6070();
+  Adafruit_VEML6070(TwoWire *i2c);
+  Adafruit_VEML6070(SoftWire *i2c);
 
-  void begin(veml6070_integrationtime_t itime, I2C *twoWire = &Wire);
+  void begin(veml6070_integrationtime_t itime);
   void setInterrupt(bool state, bool level = 0);
   bool clearAck();
   uint16_t readUV(void);
@@ -63,6 +65,13 @@ class Adafruit_VEML6070 {
  private:
   void writeCommand(void);
   I2C *_i2c;
+
+  typedef enum veml6070_i2c_lib {
+    TWOWIRE,
+    SOFTWIRE
+  } veml6070_i2c_lib_t;
+
+  veml6070_i2c_lib_t _i2cType;
 
   typedef union {
     struct {

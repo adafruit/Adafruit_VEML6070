@@ -8,6 +8,7 @@
 
 
 #include <Wire.h>
+#include <SoftWire.h>
 #include <Adafruit_VEML6070.h>
 #include <AUnitVerbose.h>
 
@@ -16,10 +17,10 @@
 #define ACK_PIN   (13)    // Blue LED on weakly when ACK is *not* set
 
 // Globals
-Adafruit_VEML6070<TwoWire> uv = Adafruit_VEML6070<TwoWire>();
+//Adafruit_VEML6070<TwoWire> uv = Adafruit_VEML6070<TwoWire>(&Wire);
+Adafruit_VEML6070<SoftWire> uv = Adafruit_VEML6070<SoftWire>(&SoftWire(SDA, SCL));
 
-
-bool i2c_ready(){
+bool i2c_ready(){ 
   return (digitalRead(SDA) == HIGH) && (digitalRead(SCL) == HIGH);
 }
 

@@ -34,6 +34,7 @@
  #include "WProgram.h"
 #endif
 #include "Wire.h"
+#include "SoftWire.h"     // SoftWire is available from Arduino Library Manager
 
 #include "Adafruit_VEML6070.h"
 
@@ -43,9 +44,9 @@
 */
 /**************************************************************************/
 template <class I2C>
-Adafruit_VEML6070<I2C>::Adafruit_VEML6070() {
     //default setting
     _commandRegister.reg = 0x02;
+
 }
 
 /**************************************************************************/
@@ -56,9 +57,6 @@ Adafruit_VEML6070<I2C>::Adafruit_VEML6070() {
 */
 /**************************************************************************/
 template <class I2C>
-void Adafruit_VEML6070<I2C>::begin(veml6070_integrationtime_t itime, I2C *twoWire) {
-  _i2c = twoWire;
-
   _commandRegister.bit.IT = itime;
 
   clearAck();
