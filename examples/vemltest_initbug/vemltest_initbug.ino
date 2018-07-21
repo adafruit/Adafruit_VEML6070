@@ -21,6 +21,7 @@ void setup() {
 bool testAck() {
   bool ack = (digitalRead(ACK_PIN) == LOW);
   if (ack) { Serial.println("ACK is set (low)"); Serial.flush(); }
+  retutrn ack;
 }
 
 bool i2c_ready(){

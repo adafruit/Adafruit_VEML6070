@@ -65,13 +65,6 @@ class Adafruit_VEML6070 {
   void writeCommand(void);
   I2C *_i2c;
 
-  typedef enum veml6070_i2c_lib {
-    TWOWIRE,
-    SOFTWIRE
-  } veml6070_i2c_lib_t;
-
-  veml6070_i2c_lib_t _i2cType;
-
   typedef union {
     struct {
       uint8_t SD:1;
