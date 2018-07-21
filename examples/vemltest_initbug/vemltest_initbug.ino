@@ -5,7 +5,7 @@
 #define POWER_PIN (11)    
 #define ACK_PIN   (13)  // Note blue LED will turn *off* if ACK is set
 
-Adafruit_VEML6070 uv = Adafruit_VEML6070();
+Adafruit_VEML6070<TwoWire> uv = Adafruit_VEML6070<TwoWire>();
 
 void setup() {
   Serial.begin(115200);
