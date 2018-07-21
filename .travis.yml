@@ -19,6 +19,7 @@ install:
    - arduino --install-library "Adafruit ILI9341"
    - arduino --install-library "AUnit"
    - arduino --install-library "SoftWire"
+   - arduino --install-library "AsyncDelay"
 
 script:
    - build_main_platforms
