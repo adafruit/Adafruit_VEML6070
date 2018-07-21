@@ -44,24 +44,10 @@
 */
 /**************************************************************************/
 template <class I2C>
-Adafruit_VEML6070<I2C>::Adafruit_VEML6070(TwoWire *i2c) {
+Adafruit_VEML6070<I2C>::Adafruit_VEML6070(I2C *i2c) {
     //default setting
     _commandRegister.reg = 0x02;
-    _i2c = (I2C*) i2c;          // Type matching of function makes this safe
-    _i2cType = TWOWIRE;
-}
-
-/**************************************************************************/
-/*! 
-    @brief constructor initializes default configuration value
-*/
-/**************************************************************************/
-template <class I2C>
-Adafruit_VEML6070<I2C>::Adafruit_VEML6070(SoftWire *i2c) {
-    //default setting
-    _commandRegister.reg = 0x02;
-    _i2c = (I2C*) i2c;          // Type matching of function makes this safe
-    _i2cType = SOFTWIRE;
+    _i2c = i2c;          // Type matching of function makes this safe
 }
 
 /**************************************************************************/

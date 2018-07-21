@@ -53,8 +53,7 @@ typedef enum veml6070_integrationtime {
 template <class I2C>
 class Adafruit_VEML6070 {
  public:
-  Adafruit_VEML6070(TwoWire *i2c);
-  Adafruit_VEML6070(SoftWire *i2c);
+  Adafruit_VEML6070(I2C *i2c);
 
   void begin(veml6070_integrationtime_t itime);
   void setInterrupt(bool state, bool level = 0);

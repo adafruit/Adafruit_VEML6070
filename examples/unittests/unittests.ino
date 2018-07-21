@@ -12,20 +12,21 @@
 #include <Adafruit_VEML6070.h>
 #include <AUnitVerbose.h>
 
+//#define USE_SOFTWIRE
+
 // Pin assignments
 #define POWER_PIN (11)
 #define ACK_PIN   (13)    // Blue LED on weakly when ACK is *not* set
 
 // Globals
-//Adafruit_VEML6070<TwoWire> uv = Adafruit_VEML6070<TwoWire>(&Wire);
-
-
-#define BUFFER_LENGTH   1
-uint8_t i2cBuf[BUFFER_LENGTH] = {0};
-SoftWire i2c(SDA, SCL);
-
-
-Adafruit_VEML6070<SoftWire> uv = Adafruit_VEML6070<SoftWire>(&i2c);
+#ifndef USE_SOFTWIRE
+  Adafruit_VEML6070<TwoWire> uv = Adafruit_VEML6070<TwoWire>(&Wire);
+#else
+  #define BUFFER_LENGTH   1
+  uint8_t i2cBuf[BUFFER_LENGTH] = {0};
+  SoftWire i2c(SDA, SCL);
+  Adafruit_VEML6070<SoftWire> uv = Adafruit_VEML6070<SoftWire>(&i2c);
+#endif
 
 
 bool i2c_ready(){ 
@@ -139,9 +140,11 @@ void setup() {
   Serial.begin(9600);
   while(!Serial); // for the Arduino Leonardo/Micro only
 
+#ifdef USE_SOFTWIRE
   i2c.setRxBuffer(i2cBuf, BUFFER_LENGTH);
   i2c.setTxBuffer(i2cBuf, BUFFER_LENGTH);
   i2c.setTimeout_ms(10);
+#endif
 
   pinMode(POWER_PIN, OUTPUT);
   digitalWrite(POWER_PIN, HIGH);
