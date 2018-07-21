@@ -18,7 +18,15 @@
 
 // Globals
 //Adafruit_VEML6070<TwoWire> uv = Adafruit_VEML6070<TwoWire>(&Wire);
-Adafruit_VEML6070<SoftWire> uv = Adafruit_VEML6070<SoftWire>(&SoftWire(SDA, SCL));
+
+
+#define BUFFER_LENGTH   1
+uint8_t i2cBuf[BUFFER_LENGTH] = {0};
+SoftWire i2c(SDA, SCL);
+
+
+Adafruit_VEML6070<SoftWire> uv = Adafruit_VEML6070<SoftWire>(&i2c);
+
 
 bool i2c_ready(){ 
   return (digitalRead(SDA) == HIGH) && (digitalRead(SCL) == HIGH);
@@ -129,8 +137,12 @@ test(3_read_with_power_cycles) {
 
 void setup() {
   delay(1000); // wait for stability on some boards to prevent garbage Serial
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial); // for the Arduino Leonardo/Micro only
+
+  i2c.setRxBuffer(i2cBuf, BUFFER_LENGTH);
+  i2c.setTxBuffer(i2cBuf, BUFFER_LENGTH);
+  i2c.setTimeout_ms(10);
 
   pinMode(POWER_PIN, OUTPUT);
   digitalWrite(POWER_PIN, HIGH);
