@@ -18,6 +18,7 @@ before_install:
 install:
    - arduino --install-library "Adafruit ILI9341"
    - arduino --install-library "AUnit"
+   - arduino --install-library "SoftWire"
 
 script:
    - build_main_platforms
