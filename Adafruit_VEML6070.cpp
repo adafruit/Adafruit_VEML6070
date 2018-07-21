@@ -44,9 +44,24 @@
 */
 /**************************************************************************/
 template <class I2C>
+Adafruit_VEML6070<I2C>::Adafruit_VEML6070(TwoWire *i2c) {
     //default setting
     _commandRegister.reg = 0x02;
+    _i2c = (I2C*) i2c;          // Type matching of function makes this safe
+    _i2cType = TWOWIRE;
+}
 
+/**************************************************************************/
+/*! 
+    @brief constructor initializes default configuration value
+*/
+/**************************************************************************/
+template <class I2C>
+Adafruit_VEML6070<I2C>::Adafruit_VEML6070(SoftWire *i2c) {
+    //default setting
+    _commandRegister.reg = 0x02;
+    _i2c = (I2C*) i2c;          // Type matching of function makes this safe
+    _i2cType = SOFTWIRE;
 }
 
 /**************************************************************************/
@@ -57,6 +72,7 @@ template <class I2C>
 */
 /**************************************************************************/
 template <class I2C>
+void Adafruit_VEML6070<I2C>::begin(veml6070_integrationtime_t itime) {
   _commandRegister.bit.IT = itime;
 
   clearAck();
@@ -166,3 +182,4 @@ void Adafruit_VEML6070<I2C>::writeCommand() {
 }
 
 template class Adafruit_VEML6070<TwoWire>;
+template class Adafruit_VEML6070<SoftWire>;
