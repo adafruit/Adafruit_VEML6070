@@ -12,13 +12,13 @@
 #include <Adafruit_VEML6070.h>
 #include <AUnitVerbose.h>
 
-//#define USE_SOFTWIRE
+#define USE_SOFTWIRE      // Comment to use core Wire.h. Test #3 will hang.
 
 // Pin assignments
 #define POWER_PIN (11)
 #define ACK_PIN   (13)    // Blue LED on weakly when ACK is *not* set
 
-// Globals
+// Globals, conditional on I2C library used.
 #ifndef USE_SOFTWIRE
   Adafruit_VEML6070<TwoWire> uv = Adafruit_VEML6070<TwoWire>(&Wire);
 #else
@@ -29,11 +29,14 @@
 #endif
 
 
+// Checks whether I2C bus is clear
 bool i2c_ready(){ 
   return (digitalRead(SDA) == HIGH) && (digitalRead(SCL) == HIGH);
 }
 
 
+// Power-cycles the VEML6070, pulling the I2C lines low
+// to ensure it's fully powered down
 bool reset_state() {  
   pinMode(POWER_PIN, OUTPUT);
   digitalWrite(POWER_PIN, LOW);
@@ -42,9 +45,9 @@ bool reset_state() {
   pinMode(SCL, OUTPUT);
   digitalWrite(SCL, LOW);
 
-  delay(1000);
+  delay(100);
 
-  // Require I2C bus to be clear
+  // Require I2C bus to be clear. Wire.begin() will restore pull-ups
   pinMode(SDA, INPUT);
   pinMode(SCL, INPUT);
   digitalWrite(POWER_PIN, HIGH);
@@ -126,7 +129,7 @@ test(3_read_with_power_cycles) {
     uint16_t value = uv.readUV();
     Serial.print("UV: ");
     Serial.println(value);
-    //assertNotEqual(value, (uint16_t) 0xFFFF);
+    assertNotEqual(value, (uint16_t) 0xFFFF);
     assertNotEqual(value, (uint16_t) 0);
 
     assertTrue(reset_state());
