@@ -46,7 +46,6 @@ bool reset_state() {
   // Require I2C bus to be clear
   pinMode(SDA, INPUT);
   pinMode(SCL, INPUT);
-  Wire.begin(); // Sets pullups on SDA and SCL
   digitalWrite(POWER_PIN, HIGH);
   delay(100);
   if (digitalRead(ACK_PIN) == LOW) {
@@ -116,7 +115,7 @@ test(2_interrupt) {
   if (!state) { skip(); } // Don't mark as success if we didn't trigger interrupt
 }
 
-/*
+
 test(3_read_with_power_cycles) {
   for (uint16_t i = 0; i < 10; i++) {
 
@@ -126,13 +125,13 @@ test(3_read_with_power_cycles) {
     uint16_t value = uv.readUV();
     Serial.print("UV: ");
     Serial.println(value);
-    assertNotEqual(value, (uint16_t) 0xFFFF);
+    //assertNotEqual(value, (uint16_t) 0xFFFF);
     assertNotEqual(value, (uint16_t) 0);
 
     assertTrue(reset_state());
   }
 }
-*/
+
 
 
 void setup() {
