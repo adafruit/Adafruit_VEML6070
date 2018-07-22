@@ -41,6 +41,7 @@
 /**************************************************************************/
 /*! 
     @brief constructor initializes default configuration value
+    @param i2c Required pointer to TwoWire or SoftWire object. e.g. &Wire
 */
 /**************************************************************************/
 template <class I2C>
@@ -54,7 +55,6 @@ Adafruit_VEML6070<I2C>::Adafruit_VEML6070(I2C *i2c) {
 /*! 
     @brief  setup and initialize communication with the hardware
     @param itime the integration time to use for the data
-    @param twoWire Optional pointer to the desired TwoWire I2C object. Defaults to &Wire
 */
 /**************************************************************************/
 template <class I2C>
@@ -167,5 +167,7 @@ void Adafruit_VEML6070<I2C>::writeCommand() {
   _i2c->endTransmission();
 }
 
+// Required to let the compiler know which templates to build, 
+// allowing template functions to be defined outside the header file (here).
 template class Adafruit_VEML6070<TwoWire>;
 template class Adafruit_VEML6070<SoftWire>;
