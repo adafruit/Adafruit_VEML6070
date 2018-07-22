@@ -34,29 +34,31 @@
  #include "WProgram.h"
 #endif
 #include "Wire.h"
+#include "SoftWire.h"     // SoftWire is available from Arduino Library Manager
 
 #include "Adafruit_VEML6070.h"
 
 /**************************************************************************/
 /*! 
     @brief constructor initializes default configuration value
+    @param i2c Required pointer to TwoWire or SoftWire object. e.g. &Wire
 */
 /**************************************************************************/
-Adafruit_VEML6070::Adafruit_VEML6070() {
+template <class I2C>
+Adafruit_VEML6070<I2C>::Adafruit_VEML6070(I2C *i2c) {
     //default setting
     _commandRegister.reg = 0x02;
+    _i2c = i2c;          // Type matching of function makes this safe
 }
 
 /**************************************************************************/
 /*! 
     @brief  setup and initialize communication with the hardware
     @param itime the integration time to use for the data
-    @param twoWire Optional pointer to the desired TwoWire I2C object. Defaults to &Wire
 */
 /**************************************************************************/
-void Adafruit_VEML6070::begin(veml6070_integrationtime_t itime, TwoWire *twoWire) {
-  _i2c = twoWire;
-
+template <class I2C>
+void Adafruit_VEML6070<I2C>::begin(veml6070_integrationtime_t itime) {
   _commandRegister.bit.IT = itime;
 
   clearAck();
@@ -70,7 +72,8 @@ void Adafruit_VEML6070::begin(veml6070_integrationtime_t itime, TwoWire *twoWire
     @param  level 1 for threshold value of 145, 0 for 102 (default)
 */
 /**************************************************************************/
-void Adafruit_VEML6070::setInterrupt(bool state, bool level) {
+template <class I2C>
+void Adafruit_VEML6070<I2C>::setInterrupt(bool state, bool level) {
   _commandRegister.bit.ACK = state;
   _commandRegister.bit.ACK_THD = level;
 
@@ -87,9 +90,16 @@ void Adafruit_VEML6070::setInterrupt(bool state, bool level) {
     @return True if ACK was active (interrupt triggered)
 */
 /**************************************************************************/
-bool Adafruit_VEML6070::clearAck() {
+template <class I2C>
+bool Adafruit_VEML6070<I2C>::clearAck() {
   _i2c->begin();
-  return _i2c->requestFrom(VEML6070_ADDR_ARA, 1);
+  bool ret = _i2c->requestFrom(VEML6070_ADDR_ARA, 1);
+
+  #ifdef _DEBUG_
+    if (ret) { Serial.println("\nACK cleared\n"); }
+  #endif
+
+  return ret;
 }
 
 /**************************************************************************/
@@ -98,7 +108,8 @@ bool Adafruit_VEML6070::clearAck() {
     @return the UV reading as a 16 bit integer
 */
 /**************************************************************************/
-uint16_t Adafruit_VEML6070::readUV() {
+template <class I2C>
+uint16_t Adafruit_VEML6070<I2C>::readUV() {
   waitForNext();
 
   if (_i2c->requestFrom(VEML6070_ADDR_H, 1) != 1) return -1;
@@ -115,7 +126,8 @@ uint16_t Adafruit_VEML6070::readUV() {
     @brief  wait for one integration period (with ~10% clock error margin)
 */
 /**************************************************************************/
-void Adafruit_VEML6070::waitForNext() {
+template <class I2C>
+void Adafruit_VEML6070<I2C>::waitForNext() {
   // Map the integration time code to the correct multiple (datasheet p. 8)
   // {0 -> 1, 1 -> 2; 2 -> 4; 3 -> 8}
   uint8_t itCount = 1;
@@ -134,7 +146,8 @@ void Adafruit_VEML6070::waitForNext() {
     @param state true to enter sleep mode, false to exit
 */
 /**************************************************************************/
-void Adafruit_VEML6070::sleep(bool state) {
+template <class I2C>
+void Adafruit_VEML6070<I2C>::sleep(bool state) {
   _commandRegister.bit.SD = state;
 
   writeCommand();
@@ -146,9 +159,15 @@ void Adafruit_VEML6070::sleep(bool state) {
     @brief write current internal _commandRegister value to device
 */
 /**************************************************************************/
-void Adafruit_VEML6070::writeCommand() {
+template <class I2C>
+void Adafruit_VEML6070<I2C>::writeCommand() {
   _i2c->begin();
   _i2c->beginTransmission(VEML6070_ADDR_L);
   _i2c->write(_commandRegister.reg);
   _i2c->endTransmission();
 }
+
+// Required to let the compiler know which templates to build, 
+// allowing template functions to be defined outside the header file (here).
+template class Adafruit_VEML6070<TwoWire>;
+template class Adafruit_VEML6070<SoftWire>;

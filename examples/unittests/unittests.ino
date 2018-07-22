@@ -8,15 +8,56 @@
 
 
 #include <Wire.h>
+#include <SoftWire.h>
 #include <Adafruit_VEML6070.h>
 #include <AUnitVerbose.h>
 
-// Pin assignments
-#define POWER_PIN (13)
-#define ACK_PIN   (11)
+#define USE_SOFTWIRE      // Comment to use core Wire.h. Test #3 will hang.
 
-// Globals
-Adafruit_VEML6070 uv = Adafruit_VEML6070();
+// Pin assignments
+#define POWER_PIN (11)
+#define ACK_PIN   (13)    // Blue LED on weakly when ACK is *not* set
+
+// Globals, conditional on I2C library used.
+#ifndef USE_SOFTWIRE
+  Adafruit_VEML6070<TwoWire> uv = Adafruit_VEML6070<TwoWire>(&Wire);
+#else
+  #define BUFFER_LENGTH   1
+  uint8_t i2cBuf[BUFFER_LENGTH] = {0};
+  SoftWire i2c(SDA, SCL);
+  Adafruit_VEML6070<SoftWire> uv = Adafruit_VEML6070<SoftWire>(&i2c);
+#endif
+
+
+// Checks whether I2C bus is clear
+bool i2c_ready(){ 
+  return (digitalRead(SDA) == HIGH) && (digitalRead(SCL) == HIGH);
+}
+
+
+// Power-cycles the VEML6070, pulling the I2C lines low
+// to ensure it's fully powered down
+bool reset_state() {  
+  pinMode(POWER_PIN, OUTPUT);
+  digitalWrite(POWER_PIN, LOW);
+  pinMode(SDA, OUTPUT);
+  digitalWrite(SDA, LOW);
+  pinMode(SCL, OUTPUT);
+  digitalWrite(SCL, LOW);
+
+  delay(100);
+
+  // Require I2C bus to be clear. Wire.begin() will restore pull-ups
+  pinMode(SDA, INPUT);
+  pinMode(SCL, INPUT);
+  digitalWrite(POWER_PIN, HIGH);
+  delay(100);
+  if (digitalRead(ACK_PIN) == LOW) {
+    Serial.println("ACK is set, expect problems...");
+  }
+  if (!i2c_ready()) { Serial.println("I2C bus locked after power cycle"); }
+  return i2c_ready();
+}
 
 
 test(0_hello) {
@@ -71,18 +112,46 @@ test(2_interrupt) {
   uv.clearAck();          // Redundant, but thorough
   uv.setInterrupt(false);
   uv.clearAck();          // Redundant, but thorough
+
+  delay(500);
+  assertFalse(uv.clearAck());
   
   if (!state) { skip(); } // Don't mark as success if we didn't trigger interrupt
 }
 
 
+test(3_read_with_power_cycles) {
+  for (uint16_t i = 0; i < 10; i++) {
+
+    Serial.println("\nInitializing");
+    uv.begin(VEML6070_1_T);             // Test hangs here on second iteration
+
+    uint16_t value = uv.readUV();
+    Serial.print("UV: ");
+    Serial.println(value);
+    assertNotEqual(value, (uint16_t) 0xFFFF);
+    assertNotEqual(value, (uint16_t) 0);
+
+    assertTrue(reset_state());
+  }
+}
+
+
+
 void setup() {
   delay(1000); // wait for stability on some boards to prevent garbage Serial
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial); // for the Arduino Leonardo/Micro only
+
+#ifdef USE_SOFTWIRE
+  i2c.setRxBuffer(i2cBuf, BUFFER_LENGTH);
+  i2c.setTxBuffer(i2cBuf, BUFFER_LENGTH);
+  i2c.setTimeout_ms(10);
+#endif
 
   pinMode(POWER_PIN, OUTPUT);
   digitalWrite(POWER_PIN, HIGH);
+  digitalWrite(ACK_PIN, INPUT_PULLUP);    // Note also 10k hardware pull-up
   delay(100);
 }
 
