@@ -6,6 +6,14 @@ branches:
   except:
     - gh-pages
 
+cache:
+  directories:
+    - ~/arduino_ide
+    - ~/.arduino15/packages/
+git:
+  depth: false
+  quiet: true
+  
 env:
   global:
      - PRETTYNAME="Adafruit VEML6070 Arduino Library"
