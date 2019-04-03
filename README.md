@@ -1,4 +1,4 @@
-# Adafruit VEML6070 Library [![Build Status](https://travis-ci.org/adafruit/Adafruit_VEML6070.svg?branch=master)](https://travis-ci.org/adafruit/Adafruit_VEML6070)
+# Adafruit VEML6070 Library [![Build Status](https://travis-ci.com/adafruit/Adafruit_VEML6070.svg?branch=master)](https://travis-ci.com/adafruit/Adafruit_VEML6070)
 
 <img src="https://cdn-shop.adafruit.com/970x728/2899-00.jpg" height="300"/>
 
